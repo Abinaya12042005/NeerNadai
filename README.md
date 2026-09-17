@@ -1,4 +1,4 @@
-# 💧 Chennai Smart Water Watch
+# 💧 NeerNadai
 ### AI-Powered Area-Wise Water Wastage Monitor + RAG Chatbot
 Built for the **1M1B AI for Sustainability Virtual Internship** (with IBM SkillsBuild & AICTE)
 **SDG Alignment:** SDG 6 — Clean Water and Sanitation
