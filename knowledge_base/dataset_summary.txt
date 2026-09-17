@@ -1,0 +1,9 @@
+CHENNAI AREA-WISE WATER CONSUMPTION - CURRENT DATASET SUMMARY
+
+Area: CHEMBARAMBAKKAM | Population served: 312,217 | Average usage: 144.5 litres/person/day | Average wastage above CPHEEO norm (135 LPCD): 13.7 litres/person/day
+Area: CHOLAVARAM | Population served: 197,367 | Average usage: 145.8 litres/person/day | Average wastage above CPHEEO norm (135 LPCD): 14.2 litres/person/day
+Area: POONDI | Population served: 191,708 | Average usage: 145.8 litres/person/day | Average wastage above CPHEEO norm (135 LPCD): 14.7 litres/person/day
+Area: REDHILLS | Population served: 385,067 | Average usage: 145.1 litres/person/day | Average wastage above CPHEEO norm (135 LPCD): 14.5 litres/person/day
+
+Highest wastage area currently: POONDI
+Lowest wastage (most efficient) area currently: CHEMBARAMBAKKAM

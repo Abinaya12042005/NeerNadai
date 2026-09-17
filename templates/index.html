@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chennai Smart Water Watch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>💧 Chennai Smart Water Watch</h1>
+  <p class="subtitle">AI-powered area-wise water wastage monitor &middot; SDG 6: Clean Water &amp; Sanitation</p>
+  <p class="updated" id="lastUpdated">Loading data...</p>
+</header>
+
+<main>
+  <section id="areaCards" class="area-cards">
+    <!-- filled by JS -->
+  </section>
+
+  <section class="chart-section">
+    <h2>City-wide average usage trend (litres/person/day)</h2>
+    <canvas id="trendChart" height="90"></canvas>
+    <p class="norm-note">Dashed line = CPHEEO recommended norm (135 LPCD)</p>
+  </section>
+</main>
+
+<!-- Floating chatbot widget -->
+<div id="chatWidget" class="chat-widget collapsed">
+  <div class="chat-header" onclick="toggleChat()">
+    🤖 Ask the Water Advisor
+    <span id="chatToggleIcon">▲</span>
+  </div>
+  <div class="chat-body" id="chatBody">
+    <div class="chat-messages" id="chatMessages">
+      <div class="bot-msg">Hi! Ask me things like "which area wastes the most water?" or "how can I save water at home?"</div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Type your question..." onkeydown="if(event.key==='Enter') sendMessage()">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+async function loadDashboard() {
+  const res = await fetch('/api/dashboard');
+  const data = await res.json();
+
+  document.getElementById('lastUpdated').innerText = "Data as of " + data.last_updated;
+
+  const riskClass = {Low: 'risk-low', Medium: 'risk-medium', High: 'risk-high', Unknown: 'risk-unknown'};
+  const cardsHtml = data.areas.map(a => `
+    <div class="area-card ${riskClass[a.risk] || 'risk-unknown'}">
+      <h3>${a.area}</h3>
+      <p class="pop">${a.population.toLocaleString()} people served</p>
+      <p class="lpcd">${a.avg_lpcd} <span>LPCD avg</span></p>
+      <p class="wastage">+${a.avg_wastage_lpcd} L/person wasted vs norm</p>
+      <span class="risk-badge">${a.risk} risk</span>
+    </div>
+  `).join('');
+  document.getElementById('areaCards').innerHTML = cardsHtml;
+
+  const ctx = document.getElementById('trendChart');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.trend.labels,
+      datasets: [
+        {
+          label: 'Average usage (LPCD)',
+          data: data.trend.values,
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37,99,235,0.08)',
+          tension: 0.3,
+          fill: true,
+        },
+        {
+          label: 'CPHEEO norm (135 LPCD)',
+          data: data.trend.labels.map(() => 135),
+          borderColor: '#dc2626',
+          borderDash: [6, 6],
+          pointRadius: 0,
+        }
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+
+function toggleChat() {
+  const widget = document.getElementById('chatWidget');
+  widget.classList.toggle('collapsed');
+  document.getElementById('chatToggleIcon').innerText = widget.classList.contains('collapsed') ? '▲' : '▼';
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const messages = document.getElementById('chatMessages');
+
+  messages.innerHTML += `<div class="user-msg">${msg}</div>`;
+  input.value = '';
+  messages.innerHTML += `<div class="bot-msg" id="typingMsg">Thinking...</div>`;
+  messages.scrollTop = messages.scrollHeight;
+
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({message: msg})
+  });
+  const data = await res.json();
+  document.getElementById('typingMsg').outerHTML = `<div class="bot-msg">${data.reply.replace(/\n/g, '<br>')}</div>`;
+  messages.scrollTop = messages.scrollHeight;
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>

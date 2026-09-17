@@ -1,0 +1,26 @@
+ABOUT THIS PROJECT - AI-POWERED SMART WATER ADVISOR
+This project was built for the 1M1B AI for Sustainability Virtual
+Internship (with IBM SkillsBuild and AICTE), addressing SDG 6: Clean
+Water and Sanitation.
+
+Problem: High water wastage across different areas/zones of Chennai,
+a water-stressed city, due to lack of real-time visibility into
+area-wise consumption patterns.
+
+AI approach used:
+1. Machine Learning (RandomForest classifier) predicts a wastage-risk
+   category (Low/Medium/High) for each area based on consumption
+   patterns, population served, and seasonality.
+2. Retrieval-Augmented Generation (RAG) chatbot lets citizens and
+   officials ask natural-language questions ("which area wastes the
+   most water?", "how can I save water at home?") and get answers
+   grounded in the real dataset and verified water-conservation
+   knowledge, instead of the AI guessing from general training data.
+
+Responsible AI considerations:
+- Fairness: risk categories are based on per-person usage (LPCD), not
+  raw totals, so densely populated areas aren't unfairly flagged.
+- Transparency: the dashboard always shows the underlying data the
+  prediction is based on, not just a black-box score.
+- Privacy: only aggregated, publicly available area-level data is
+  used - no individual household or personal data.
